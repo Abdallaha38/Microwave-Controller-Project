@@ -24,7 +24,7 @@ void systick_wait_1ms(){
 }
 
 // Function that makes multiple of millie seconed delay
-void delay_micro( int time){  // the argument is no. of m-seconds i.e delay(5) it will generate a 5-m-sec delay
+void delay_millie( int time){  // the argument is no. of m-seconds i.e delay(5) it will generate a 5-m-sec delay
    int i;
 	 for(i=0;i< time; i++){
 	 systick_wait_1ms();
