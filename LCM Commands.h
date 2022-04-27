@@ -22,14 +22,14 @@ void send_instruction(unsigned char instruction){
 }
 
 void send_data(){
-	GPIO_PORTE_DATA_R = 0x02;
+	GPIO_PORTE_DATA_R = 0x04;
 }
 
 void print_char(char letter){
 	send_data();
 	GPIO_PORTB_DATA_R = letter;
 	enable_toggle();
-	delay_us(1);
+	//delay_us(37);
 }
 
 void lcm_print(char text[16]){
@@ -41,7 +41,11 @@ void lcm_print(char text[16]){
 
 void LCM_Init(){
 	send_instruction(clear_display);
+	//delay_ms(2);
 	send_instruction(function_set);
+	//delay_us(37);
 	send_instruction(display_control);
+	//delay_us(37);
 	send_instruction(entry_mode_set);
+	//delay_us(37);
 }
