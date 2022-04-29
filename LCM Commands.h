@@ -308,11 +308,11 @@ void print_time(int minute, int second){
 }
 
 void print_delay(int minutes, int seconds){
-	int i, j, k;
+	int i, j = seconds, k;
 	lcm_newline();
 	lcm_print("Time left: ");
 	for(i = minutes; i >= 0; i--){
-		for(j = seconds; j >= 0; j--){
+		for(j; j >= 0; j--){
 			lcm_movecursor(1, 11);
 			lcm_print("     ");
 			lcm_movecursor(1, 11);
