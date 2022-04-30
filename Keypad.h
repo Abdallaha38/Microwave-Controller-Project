@@ -59,7 +59,7 @@ char keypad_clicked()
         if((GPIO_PORTA_DATA_R & 0xF0) == (1U << (j+4)))
           return keys[i][j];
       }
-  delay(150); //Debounce delay
+  delay(250); //Debounce delay
     }
   }
 }
