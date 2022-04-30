@@ -26,8 +26,6 @@ void check_start(char x){
 }
 
 void cookingTimer(){
-	lcm_print_string(t);
-	lcm_movecursor(0, 4);
 	for(i = 0; i < 3; i++){
 		check_start(keypad_clicked());
 		lcm_instruction(clear_display);
@@ -122,46 +120,9 @@ void choose_meal(){
 		
 		case 'D' :
 			lcm_print_string("Cooking Time?");
-			
-		//Printing time with no conditions neither a way for counting down, yet :)
-			m = keypad_clicked();
-			lcm_instruction(clear_display);
-			lcm_print_string("00:0");
-			lcm_print_char(m, 0);
-			temp[0] = m;
-		
-			m = keypad_clicked();
-			lcm_instruction(clear_display);
-			lcm_print_string("00:");
-			lcm_print_char(temp[0], 0);
-			lcm_print_char(m, 0);
-			temp[1] = m;
-		
-			m = keypad_clicked();
-			lcm_instruction(clear_display);
-			lcm_print_string("0");
-			lcm_print_char(temp[0], 0);
-			lcm_print_string(":");
-			lcm_print_char(temp[1], 0);
-			lcm_print_char(m, 0);
-			temp[2] = m;
-			
-			m = keypad_clicked();
-			lcm_instruction(clear_display);
-			lcm_print_char(temp[0], 0);
-			lcm_print_char(temp[1], 0);
-			lcm_print_string(":");
-			lcm_print_char(temp[2], 0);
-			lcm_print_char(m, 0);
-			temp[3] = m;
-			/*
-			lcm_instruction(clear_display);
-			print_delay();
-			lcm_instruction(clear_display);
-			*/
+			cookingTimer();
 			break;
 	}
-  
 }
 
 int main(){
