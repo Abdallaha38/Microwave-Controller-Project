@@ -1,4 +1,3 @@
-#include "delay functions.h"
 #include "tm4c123gh6pm.h"
 
 //Keypad intializaton
@@ -6,7 +5,7 @@ void keypad_Init(void)
 {
   SYSCTL_RCGCGPIO_R |= 0x05; //Enable clock in PORTC and PORTA
   while ((SYSCTL_RCGCGPIO_R & 0x05)==0) //Wait to be set
-	
+
  //PORTC digital output for rows
  GPIO_PORTC_CR_R |= 0xF0; //Allow settings for all pins of PORTC
  GPIO_PORTC_AMSEL_R &= ~0xF0; //Disable analog functionality
@@ -15,7 +14,7 @@ void keypad_Init(void)
  GPIO_PORTC_DIR_R |= 0xF0 ; //PD0-PD3 rows and set as digital output pins
  GPIO_PORTC_DEN_R |= 0xF0; //Set PORTC as digital pins
  GPIO_PORTC_DATA_R &= ~0xF0; //Clear data pins intially
-	
+
  //PORTA digital input for columns
  GPIO_PORTA_CR_R |= 0xF0; //Allow settings for all pins of PORTC
  GPIO_PORTA_AMSEL_R &= ~0xF0; //Disable analog functionality
@@ -25,14 +24,14 @@ void keypad_Init(void)
  GPIO_PORTA_DEN_R |= 0xF0; //Set PORTA as digital pins
  GPIO_PORTA_PDR_R = 0xF0;
  GPIO_PORTA_DATA_R &= ~0xF0; //Clear data pins intially
-	
+
 }
 
 
 
 void delay(int time){
  int i, j;
- for (i = 0; i < 1; i++){
+ for (i = 0; i < 3180; i++){
   for (j = 0; j < time; j++);
  }
 }
@@ -55,13 +54,12 @@ char keypad_clicked()
     { 
    GPIO_PORTC_DIR_R = (1U << (i + 4));
       GPIO_PORTC_DATA_R = (1U << (i + 4));
-   delay(50);
       for(j = 0; j < 4; j++) //Scan rows
       {
         if((GPIO_PORTA_DATA_R & 0xF0) == (1U << (j+4)))
           return keys[i][j];
       }
-  delay(500); //Debounce delay
+  delay(150); //Debounce delay
     }
   }
 }
