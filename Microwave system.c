@@ -32,7 +32,7 @@ void cookingTimer(){
 		lcm_instruction(clear_display);
 		lcm_print_string(t);
 		lcm_movecursor(0, 4);
-		delay_ms(250);
+		delay_ms(150);
 	}
 	check_start(keypad_clicked());
 	lcm_instruction(clear_display);
