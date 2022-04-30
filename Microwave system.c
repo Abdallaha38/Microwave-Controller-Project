@@ -37,6 +37,7 @@ void cookingTimer(){
 	check_start(keypad_clicked());
 	lcm_instruction(clear_display);
 	lcm_print_string(t);
+	lcm_movecursor(0, 16);
 	while(keypad_clicked() != '*');
 	timer();
 }
