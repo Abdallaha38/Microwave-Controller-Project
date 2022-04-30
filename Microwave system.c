@@ -11,7 +11,7 @@ int minutes, seconds, i;
 void timer(){
 	seconds = 10 * (t[3] - '0') + (t[4] - '0');
 	minutes = 10 * (t[0] - '0') + (t[1] - '0');
-	print_delay(minutes, seconds);
+	print_delay(((minutes > 30)? 30 : minutes), ((minutes > 30)? 0 : seconds));
 }
 
 void check_start(char x){
