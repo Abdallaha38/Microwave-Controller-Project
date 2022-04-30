@@ -5,7 +5,7 @@
 
 
 
-char t[5] = {0, 0, :, 0, 0};
+char t[5] = {'0', '0', ':', '0', '0'};
 int minutes, seconds, i;
 
 void timer(){
@@ -26,6 +26,7 @@ void check_start(char x){
 }
 
 void cookingTimer(){
+	delay_ms(100);
 	for(i = 0; i < 3; i++){
 		check_start(keypad_clicked());
 		lcm_instruction(clear_display);
@@ -55,7 +56,7 @@ void choose_meal(){
 		lcm_instruction(clear_display); 
 	}*/
 	
-	switch(x){
+	switch(m){
 		
 		case 'A':
 			lcm_print_string("Popcorn");
@@ -63,7 +64,8 @@ void choose_meal(){
 			break;
 		
 		case 'B':
-			lcm_print_string("Beef weight?"); 
+			lcm_print_string("Beef weight?");
+			delay_ms(100);
 			m = keypad_clicked();
 			//Checking for valid kilos entered (1-9)
 			for(count = 0; count < 9; count++)
@@ -92,6 +94,7 @@ void choose_meal(){
    
 		case 'C' :
 			lcm_print_string("Chicken weight?");
+			delay_ms(100);
 			m = keypad_clicked();
 			//Checking for valid kilos entered (1-9)
 			for(count = 0; count< 9; count++)
@@ -126,6 +129,10 @@ void choose_meal(){
 }
 
 int main(){
+	
+	systick_Init();
+	lcm_Init();
+	keypad_Init();
 	
 	while(1){
 		choose_meal();
