@@ -6,12 +6,12 @@
 char t[5] = { '0', '0', ':', '0', '0' };
 int minutes, seconds, i;
 
-void interrupt_rdy(int x){
-	if (!x){
+void interrupt_rdy(int x) {
+	if (!x) {
 		GPIO_PORTD_IM_R &= ~0x80;
 		GPIO_PORTD_IM_R &= ~0x11;
 	}
-	else if (x){
+	else if (x) {
 		GPIO_PORTD_IM_R |= 0x80;
 		GPIO_PORTD_IM_R |= 0x11;
 	}
@@ -37,6 +37,7 @@ void choose_meal() {
 		interrupt_rdy(1);
 		minutes = 1;
 		seconds = 0;
+		while (1);
 		break;
 
 	case 'B':
@@ -68,6 +69,7 @@ void choose_meal() {
 		//lcm_print("Time remaining = z seconds");
 		minutes = z / 60;
 		seconds = z % 60;
+		while (1);
 		break;
 
 	case 'C':
@@ -99,19 +101,24 @@ void choose_meal() {
 		//lcm_print("Time remaining = z seconds");
 		minutes = z / 60;
 		seconds = z % 60;
+		while (1);
 		break;
 
 	case 'D':
 		lcm_print_string("Cooking Time?");
 		interrupt_rdy(1);
-		t[5] = { '0', '0', ':', '0', '0' };
+		t[0] = '0';
+		t[1] = '0';
+		t[3] = '0';
+		t[4] = '0';
 		delay_ms(100);
-		while (1){
+		while (1) {
 			t[0] = t[1];
 			t[1] = t[3];
 			t[3] = t[4];
 			t[4] = keypad_clicked();
-			lcm_print("Time left: ");
+			delay_ms(250);
+			lcm_movecursor(1, 0);
 			lcm_print(t);
 			seconds = 10 * (t[3] - '0') + (t[4] - '0');
 			minutes = 10 * (t[0] - '0') + (t[1] - '0');
@@ -147,7 +154,6 @@ GPIOF_Handler() {
 				break;
 			}
 			else if ((GPIO_PORTF_DATA_R & 0x10) == 0) {
-				//GPIO_PORTF_ICR_R |= 0x10;
 				GPIO_PORTE_DIR_R |= 0x08;
 				GPIO_PORTE_DATA_R &= ~0x08;
 				break;
@@ -156,6 +162,7 @@ GPIOF_Handler() {
 	}
 
 	else if (GPIO_PORTF_MIS_R == 0x01) {
+		lcm_instruction(clear_display);
 		print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
 		GPIO_PORTE_DIR_R |= 0x08;
 		GPIO_PORTE_DATA_R &= ~0x08;
