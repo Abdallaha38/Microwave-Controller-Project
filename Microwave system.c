@@ -6,49 +6,15 @@
 char t[5] = { '0', '0', ':', '0', '0' };
 int minutes, seconds, i;
 
-/*void interrupt_rdy(int x){
+void interrupt_rdy(int x){
 	if (!x){
 		GPIO_PORTD_IM_R &= ~0x80;
 		GPIO_PORTD_IM_R &= ~0x11;
 	}
-	else{
+	else if (x){
 		GPIO_PORTD_IM_R |= 0x80;
 		GPIO_PORTD_IM_R |= 0x11;
 	}
-}*/
-
-void timer() {
-	seconds = 10 * (t[3] - '0') + (t[4] - '0');
-	minutes = 10 * (t[0] - '0') + (t[1] - '0');
-	print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
-}
-
-void check_start(char x) {
-	if (x == '*')
-		timer();
-	else {
-		t[0] = t[1];
-		t[1] = t[3];
-		t[3] = t[4];
-		t[4] = x;
-	}
-}
-
-void cookingTimer() {
-	delay_ms(100);
-	for (i = 0; i < 3; i++) {
-		check_start(keypad_clicked());
-		lcm_instruction(clear_display);
-		lcm_print_string(t);
-		lcm_movecursor(0, 4);
-		delay_ms(150);
-	}
-	check_start(keypad_clicked());
-	lcm_instruction(clear_display);
-	lcm_print_string(t);
-	lcm_movecursor(0, 16);
-	while (keypad_clicked() != '*');
-	timer();
 }
 
 void choose_meal() {
@@ -58,19 +24,19 @@ void choose_meal() {
 	char kilos[9] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 	short count;
 
-	//interrupt_rdy(0);
+	interrupt_rdy(0);
 	lcm_instruction(clear_display);
 	lcm_print("5od Samboosa");
 	m = keypad_clicked();
 	lcm_instruction(clear_display);
-	//interrupt_rdy(1);
 
 	switch (m) {
 
 	case 'A':
 		lcm_print_string("Popcorn");
-		print_delay(1, 0);
-		lcm_instruction(clear_display);
+		interrupt_rdy(1);
+		minutes = 1;
+		seconds = 0;
 		break;
 
 	case 'B':
@@ -95,12 +61,13 @@ void choose_meal() {
 		}
 		lcm_print_char(m, 0);
 		delay_s(2);
+		interrupt_rdy(1);
 		lcm_instruction(clear_display);
 		i = m - '0';
 		z = 30 * i;
 		//lcm_print("Time remaining = z seconds");
-		print_delay((z / 60), (z % 60));
-		lcm_instruction(clear_display);
+		minutes = z / 60;
+		seconds = z % 60;
 		break;
 
 	case 'C':
@@ -125,18 +92,30 @@ void choose_meal() {
 		}
 		lcm_print_char(m, 0);
 		delay_s(2);
+		interrupt_rdy(1);
 		lcm_instruction(clear_display);
 		i = m - '0';
 		z = 12 * i;
 		//lcm_print("Time remaining = z seconds");
-		print_delay((z / 60), (z % 60));
-		lcm_instruction(clear_display);
+		minutes = z / 60;
+		seconds = z % 60;
 		break;
 
 	case 'D':
 		lcm_print_string("Cooking Time?");
-		cookingTimer();
-		lcm_instruction(clear_display);
+		interrupt_rdy(1);
+		t[5] = { '0', '0', ':', '0', '0' };
+		delay_ms(100);
+		while (1){
+			t[0] = t[1];
+			t[1] = t[3];
+			t[3] = t[4];
+			t[4] = keypad_clicked();
+			lcm_print("Time left: ");
+			lcm_print(t);
+			seconds = 10 * (t[3] - '0') + (t[4] - '0');
+			minutes = 10 * (t[0] - '0') + (t[1] - '0');
+		}
 		break;
 	}
 }
@@ -177,8 +156,9 @@ GPIOF_Handler() {
 	}
 
 	else if (GPIO_PORTF_MIS_R == 0x01) {
-
-		GPIO_PORTF_ICR_R |= 0x01;
+		print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
+		GPIO_PORTE_DIR_R |= 0x08;
+		GPIO_PORTE_DATA_R &= ~0x08;
 	}
 }
 
@@ -188,10 +168,6 @@ int main() {
 	lcm_Init();
 	keypad_Init();
 	interrupt_Init();
-
-
-	while (1) {
-		choose_meal();
-	}
+	choose_meal();
 
 }
