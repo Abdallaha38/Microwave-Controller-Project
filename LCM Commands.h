@@ -258,6 +258,17 @@ char lcm_read(int row, int column){
 	return (x & 0x7F);
 }
 
+// a function that moves cursor to the beginning of the first line
+void lcm_firstline() {
+	int i = 0;
+	lcm_movecursor(0, 0);
+	while (i < 40) {
+		lcm_print_char(' ', 0);
+		i++;
+	}
+	lcm_instruction(return_home);
+}
+
 // a function that moves cursor to the beginning of the second line
 void lcm_newline(){
 	int i = 0;

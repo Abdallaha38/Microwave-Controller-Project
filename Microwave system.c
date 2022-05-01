@@ -42,6 +42,7 @@ void choose_meal() {
 		interrupt_rdy(1);
 		minutes = 1;
 		seconds = 0;
+		lcm_newline();
 		lcm_print("start?");
 		while (GPIO_PORTF_DATA_R & 0x01);
 		break;
@@ -106,7 +107,6 @@ void choose_meal() {
 		lcm_print("start?");
 		i = m - '0';
 		z = 12 * i;
-		//lcm_print("Time remaining = z seconds");
 		minutes = z / 60;
 		seconds = z % 60;
 		while (GPIO_PORTF_DATA_R & 0x01);
@@ -137,7 +137,7 @@ void choose_meal() {
 			minutes = 10 * (t[0] - '0') + (t[1] - '0');
 			j++;
 		}
-		lcm_instruction(clear_display);
+		lcm_firstline();
 		lcm_print("start?");
 		while (GPIO_PORTF_DATA_R & 0x01);
 		break;
