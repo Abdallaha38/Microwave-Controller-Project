@@ -20,7 +20,7 @@ void interrupt_rdy(int x) {
 void choose_meal() {
 
 	char m;
-	int i, z;
+	int i, z, j;
 	char kilos[9] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 	short count;
 
@@ -42,7 +42,8 @@ void choose_meal() {
 		interrupt_rdy(1);
 		minutes = 1;
 		seconds = 0;
-		while (1);
+		lcm_print("start?");
+		while (GPIO_PORTF_DATA_R & 0x01);
 		break;
 
 	case 'B':
@@ -69,12 +70,13 @@ void choose_meal() {
 		delay_s(2);
 		interrupt_rdy(1);
 		lcm_instruction(clear_display);
+		lcm_print("start?");
 		i = m - '0';
 		z = 30 * i;
 		//lcm_print("Time remaining = z seconds");
 		minutes = z / 60;
 		seconds = z % 60;
-		while (1);
+		while (GPIO_PORTF_DATA_R & 0x01);
 		break;
 
 	case 'C':
@@ -101,12 +103,13 @@ void choose_meal() {
 		delay_s(2);
 		interrupt_rdy(1);
 		lcm_instruction(clear_display);
+		lcm_print("start?");
 		i = m - '0';
 		z = 12 * i;
 		//lcm_print("Time remaining = z seconds");
 		minutes = z / 60;
 		seconds = z % 60;
-		while (1);
+		while (GPIO_PORTF_DATA_R & 0x01);
 		break;
 
 	case 'D':
@@ -117,19 +120,36 @@ void choose_meal() {
 		t[3] = '0';
 		t[4] = '0';
 		delay_ms(100);
-		while (1) {
-			t[0] = t[1];
-			t[1] = t[3];
-			t[3] = t[4];
-			t[4] = keypad_clicked();
+		while (j < 4) {
+			m = keypad_clicked();
+			if (m == '*')
+				break;
+			else {
+				t[0] = t[1];
+				t[1] = t[3];
+				t[3] = t[4];
+				t[4] = m;
+			}
 			delay_ms(250);
 			lcm_movecursor(1, 0);
 			lcm_print(t);
 			seconds = 10 * (t[3] - '0') + (t[4] - '0');
 			minutes = 10 * (t[0] - '0') + (t[1] - '0');
+			j++;
 		}
+		lcm_instruction(clear_display);
+		lcm_print("start?");
+		while (GPIO_PORTF_DATA_R & 0x01);
 		break;
 	}
+}
+
+void start() {
+	lcm_instruction(clear_display);
+	GPIO_PORTF_DATA_R |= 0x0E;
+	print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
+	GPIO_PORTE_DIR_R |= 0x08;
+	GPIO_PORTE_DATA_R &= ~0x08;
 }
 
 GPIOD_Handler() {
@@ -148,31 +168,21 @@ GPIOD_Handler() {
 }
 
 GPIOF_Handler() {
-	if (GPIO_PORTF_MIS_R == 0x10) {
+	delay_ms(500);
+	while (1) {
+		GPIO_PORTF_DATA_R &= ~0x0E;
 		delay_ms(500);
-		while (1) {
-			GPIO_PORTF_DATA_R &= ~0x0E;
-			delay_ms(500);
-			GPIO_PORTF_DATA_R |= 0x0E;
-			delay_ms(500);
-			if ((GPIO_PORTF_DATA_R & 0x01) == 0) {
-				GPIO_PORTF_ICR_R |= 0x10;
-				break;
-			}
-			else if ((GPIO_PORTF_DATA_R & 0x10) == 0) {
-				GPIO_PORTE_DIR_R |= 0x08;
-				GPIO_PORTE_DATA_R &= ~0x08;
-				break;
-			}
-		}
-	}
-
-	else if (GPIO_PORTF_MIS_R == 0x01) {
-		lcm_instruction(clear_display);
 		GPIO_PORTF_DATA_R |= 0x0E;
-		print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
-		GPIO_PORTE_DIR_R |= 0x08;
-		GPIO_PORTE_DATA_R &= ~0x08;
+		delay_ms(500);
+		if ((GPIO_PORTF_DATA_R & 0x01) == 0) {
+			GPIO_PORTF_ICR_R |= 0x10;
+			break;
+		}
+		else if ((GPIO_PORTF_DATA_R & 0x10) == 0) {
+			GPIO_PORTE_DIR_R |= 0x08;
+			GPIO_PORTE_DATA_R &= ~0x08;
+			break;
+		}
 	}
 }
 
@@ -183,5 +193,5 @@ int main() {
 	keypad_Init();
 	interrupt_Init();
 	choose_meal();
-
+	start();
 }
