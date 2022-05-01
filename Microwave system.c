@@ -1,23 +1,32 @@
 #include "tm4c123gh6pm.h"
-#include "LCM commands.h"
 #include "keypad.h"
-#include "ctype.h"
+#include "LCM Commands.h"
+#include "interrupts.h"
 
-
-
-char t[5] = {'0', '0', ':', '0', '0'};
+char t[5] = { '0', '0', ':', '0', '0' };
 int minutes, seconds, i;
 
-void timer(){
+/*void interrupt_rdy(int x){
+	if (!x){
+		GPIO_PORTD_IM_R &= ~0x80;
+		GPIO_PORTD_IM_R &= ~0x11;
+	}
+	else{
+		GPIO_PORTD_IM_R |= 0x80;
+		GPIO_PORTD_IM_R |= 0x11;
+	}
+}*/
+
+void timer() {
 	seconds = 10 * (t[3] - '0') + (t[4] - '0');
 	minutes = 10 * (t[0] - '0') + (t[1] - '0');
-	print_delay(((minutes > 30)? 30 : minutes), ((minutes > 30)? 0 : seconds));
+	print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
 }
 
-void check_start(char x){
-	if(x == '*')
+void check_start(char x) {
+	if (x == '*')
 		timer();
-	else{
+	else {
 		t[0] = t[1];
 		t[1] = t[3];
 		t[3] = t[4];
@@ -25,9 +34,9 @@ void check_start(char x){
 	}
 }
 
-void cookingTimer(){
+void cookingTimer() {
 	delay_ms(100);
-	for(i = 0; i < 3; i++){
+	for (i = 0; i < 3; i++) {
 		check_start(keypad_clicked());
 		lcm_instruction(clear_display);
 		lcm_print_string(t);
@@ -38,105 +47,151 @@ void cookingTimer(){
 	lcm_instruction(clear_display);
 	lcm_print_string(t);
 	lcm_movecursor(0, 16);
-	while(keypad_clicked() != '*');
+	while (keypad_clicked() != '*');
 	timer();
 }
 
-void choose_meal(){
-	
+void choose_meal() {
+
 	char m;
 	int i, z;
-	char kilos[9] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+	char kilos[9] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 	short count;
- 
-	//lcm_print("Enter letter (A-B-C-D) to choose a meal");
-	//lcm_instruction(clear_display);
+
+	//interrupt_rdy(0);
+	lcm_instruction(clear_display);
+	lcm_print("5od Samboosa");
 	m = keypad_clicked();
-	/*if(!isalpha(x)){
-		lcm_print_string("Invalid input !");
-		lcm_instruction(clear_display); 
-	}*/
-	
-	switch(m){
-		
-		case 'A':
-			lcm_print_string("Popcorn");
-			print_delay(1, 0); 
-			break;
-		
-		case 'B':
-			lcm_print_string("Beef weight?");
-			delay_ms(100);
-			m = keypad_clicked();
-			//Checking for valid kilos entered (1-9)
-			for(count = 0; count < 9; count++)
-				{
-					lcm_instruction(clear_display);
-					if(m == kilos[count])
-						break;
-					else if(count == 8)
-					{
-						lcm_print_string("Err");
-						delay_s(2);
-						lcm_instruction(clear_display); 
-						lcm_print_string("Beef weight?");
-						m = keypad_clicked();
-						count = 0;
-					}
-				}
-			lcm_print_char(m, 0);
-			delay_s(2);
-			lcm_instruction(clear_display); 
-			i = m - '0';
-			z = 30 * i;
-			//lcm_print("Time remaining = z seconds");
-			print_delay((z / 60), (z % 60));
-			break;
-   
-		case 'C' :
-			lcm_print_string("Chicken weight?");
-			delay_ms(100);
-			m = keypad_clicked();
-			//Checking for valid kilos entered (1-9)
-			for(count = 0; count< 9; count++)
-				{
-					lcm_instruction(clear_display);
-					if(m == kilos[count])
-						break;
-					else if(count == 8)
-					{
-						lcm_print_string("Err");
-						delay_s(2);
-						lcm_instruction(clear_display); 
-						lcm_print_string("Chicken weight?");
-						m = keypad_clicked();
-						count = 0;
-					}
-				}
-			lcm_print_char(m, 0);
-			delay_s(2);
-			lcm_instruction(clear_display); 
-			i = m - '0';
-			z = 12 * i;
-			//lcm_print("Time remaining = z seconds");
-			print_delay((z / 60), (z % 60));
-			break;	
-		
-		case 'D' :
-			lcm_print_string("Cooking Time?");
-			cookingTimer();
-			break;
+	lcm_instruction(clear_display);
+	//interrupt_rdy(1);
+
+	switch (m) {
+
+	case 'A':
+		lcm_print_string("Popcorn");
+		print_delay(1, 0);
+		lcm_instruction(clear_display);
+		break;
+
+	case 'B':
+		lcm_print_string("Beef weight?");
+		delay_ms(100);
+		m = keypad_clicked();
+		//Checking for valid kilos entered (1-9)
+		for (count = 0; count < 9; count++)
+		{
+			lcm_instruction(clear_display);
+			if (m == kilos[count])
+				break;
+			else if (count == 8)
+			{
+				lcm_print_string("Err");
+				delay_s(2);
+				lcm_instruction(clear_display);
+				lcm_print_string("Beef weight?");
+				m = keypad_clicked();
+				count = 0;
+			}
+		}
+		lcm_print_char(m, 0);
+		delay_s(2);
+		lcm_instruction(clear_display);
+		i = m - '0';
+		z = 30 * i;
+		//lcm_print("Time remaining = z seconds");
+		print_delay((z / 60), (z % 60));
+		lcm_instruction(clear_display);
+		break;
+
+	case 'C':
+		lcm_print_string("Chicken weight?");
+		delay_ms(100);
+		m = keypad_clicked();
+		//Checking for valid kilos entered (1-9)
+		for (count = 0; count < 9; count++)
+		{
+			lcm_instruction(clear_display);
+			if (m == kilos[count])
+				break;
+			else if (count == 8)
+			{
+				lcm_print_string("Err");
+				delay_s(2);
+				lcm_instruction(clear_display);
+				lcm_print_string("Chicken weight?");
+				m = keypad_clicked();
+				count = 0;
+			}
+		}
+		lcm_print_char(m, 0);
+		delay_s(2);
+		lcm_instruction(clear_display);
+		i = m - '0';
+		z = 12 * i;
+		//lcm_print("Time remaining = z seconds");
+		print_delay((z / 60), (z % 60));
+		lcm_instruction(clear_display);
+		break;
+
+	case 'D':
+		lcm_print_string("Cooking Time?");
+		cookingTimer();
+		lcm_instruction(clear_display);
+		break;
 	}
 }
 
-int main(){
-	
+GPIOD_Handler() {
+	if (GPIO_PORTD_MIS_R == 0x80) {
+		lcm_movedisplay(20);
+		lcm_movecursor(0, 20);
+		lcm_print("CLOSE THE DOOR!!");
+		while (GPIO_PORTD_MIS_R == 0x80) {
+			lcm_instruction(display_off);
+			delay_ms(500);
+			lcm_instruction(display_on);
+			delay_ms(500);
+		}
+		lcm_instruction(return_home);
+	}
+	else if (GPIO_PORTD_MIS_R == 0x40) {
+
+	}
+}
+
+GPIOF_Handler() {
+	if (GPIO_PORTF_MIS_R == 0x10) {
+		delay_ms(500);
+		while (1) {
+			if ((GPIO_PORTF_DATA_R & 0x01) == 0) {
+				GPIO_PORTF_ICR_R |= 0x10;
+				break;
+			}
+			else if ((GPIO_PORTF_DATA_R & 0x10) == 0) {
+				//GPIO_PORTF_ICR_R |= 0x10;
+				GPIO_PORTE_DIR_R |= 0x08;
+				GPIO_PORTE_DATA_R &= ~0x08;
+				break;
+			}
+		}
+	}
+
+	else if (GPIO_PORTF_MIS_R == 0x01) {
+
+		GPIO_PORTF_ICR_R |= 0x01;
+	}
+}
+
+int main() {
+
 	systick_Init();
 	lcm_Init();
 	keypad_Init();
-	
-	while(1){
+	interrupt_Init();
+
+
+	while (1) {
 		choose_meal();
 	}
-	
+
 }
