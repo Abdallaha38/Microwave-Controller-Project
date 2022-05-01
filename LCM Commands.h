@@ -17,15 +17,17 @@
 #define entry_mode_2 0x07 // cursor from left to right; autoshift display on
 #define entry_mode_3 0x04 // cursor from right to left; shift display off
 #define entry_mode_4 0x05 // cursor from right to left; shift display on
-#define display_control_1 0x0C //diplay on; cursor off; cursor blink off
-#define display_control_2 0x0D //diplay on; cursor off; cursor blink on
-#define display_control_3 0x0E //diplay on; cursor on; cursor blink off
-#define display_control_4 0x0F //diplay on; cursor on; cursor blink on
-#define cursor_shift_right 0x14 //do not shift display; shift cursor to the left 
-#define cursor_shift_left 0x10 //do not shift display; shift cursor to the right
-#define display_shift_right 0x1C //shift display to the right; cursor moves accordingly
-#define display_shift_left 0x18 //shift display to the left; cursor moves accordingly
-#define function_set 0x38 //8-bit mode; 2-line; 5x8 font
+#define display_control_1 0x0C // diplay on; cursor off; cursor blink off
+#define display_control_2 0x0D // diplay on; cursor off; cursor blink on
+#define display_control_3 0x0E // diplay on; cursor on; cursor blink off
+#define display_control_4 0x0F // diplay on; cursor on; cursor blink on
+#define display_off 0x08 // display off; data are still stored
+#define display_on 0x0C // display back on; stored data are printed
+#define cursor_shift_right 0x14 // do not shift display; shift cursor to the left 
+#define cursor_shift_left 0x10 // do not shift display; shift cursor to the right
+#define display_shift_right 0x1C // shift display to the right; cursor moves accordingly
+#define display_shift_left 0x18 // shift display to the left; cursor moves accordingly
+#define function_set 0x38 // 8-bit mode; 2-line; 5x8 font
 
 // location addresses
 const unsigned char line0[40] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x04, 0x25, 0x26, 0x27};
@@ -49,10 +51,10 @@ void PORTE_Init(){
 	SYSCTL_RCGCGPIO_R |= 0x10;
 	while((SYSCTL_RCGCGPIO_R & 0x10) == 0);
 	GPIO_PORTE_LOCK_R = GPIO_LOCK_KEY;
-	GPIO_PORTE_CR_R = 0x07;
+	GPIO_PORTE_CR_R = 0x0F;
 	GPIO_PORTE_AMSEL_R = 0x00;
 	GPIO_PORTE_AFSEL_R = 0x00;
-	GPIO_PORTE_DEN_R = 0x07;
+	GPIO_PORTE_DEN_R = 0x0F;
 	GPIO_PORTE_PCTL_R = 0x00000000;
 	GPIO_PORTE_DIR_R = 0x07;
 }
@@ -303,7 +305,9 @@ void print_time(int minute, int second){
 	else
 		sprintf(temp_s, "%d", second);
 	
-	print_time_char(temp_m, temp_s);
+	lcm_print(temp_m);
+	lcm_print(":");
+	lcm_print(temp_s);
 }
 
 // a function that prints a countdown to 0 from assigned time
@@ -314,18 +318,19 @@ void print_delay(int minutes, int seconds){
 	for(i = minutes; i >= 0; i--){
 		for(j = j; j >= 0; j--){
 			lcm_movecursor(1, 11);
-			lcm_print("     ");
-			lcm_movecursor(1, 11);
 			print_time(i, j);
 			delay_s(1);
 		}
 		j = 59;
 	}
+	
+	lcm_newline();
+	lcm_print("Finished !!");
 	for(k = 0; k < 3; k++){ 
-		lcm_newline();
 		delay_ms(500);
-		lcm_print("Finished !!");
+		lcm_instruction(display_off);
 		delay_ms(500);
+		lcm_instruction(display_on);
 	}
 }
 
