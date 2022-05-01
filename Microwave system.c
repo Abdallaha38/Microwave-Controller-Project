@@ -9,11 +9,11 @@ int minutes, seconds, i;
 void interrupt_rdy(int x) {
 	if (!x) {
 		GPIO_PORTD_IM_R &= ~0x80;
-		GPIO_PORTD_IM_R &= ~0x11;
+		//GPIO_PORTD_IM_R &= ~0x10;
 	}
 	else if (x) {
 		GPIO_PORTD_IM_R |= 0x80;
-		GPIO_PORTD_IM_R |= 0x11;
+		//GPIO_PORTD_IM_R |= 0x10;
 	}
 }
 
