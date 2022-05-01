@@ -20,7 +20,7 @@ void interrupt_rdy(int x) {
 void choose_meal() {
 
 	char m;
-	int i, z, j;
+	int i, z;
 	char kilos[9] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 	short count;
 
@@ -120,7 +120,7 @@ void choose_meal() {
 		t[3] = '0';
 		t[4] = '0';
 		delay_ms(100);
-		while (j < 4) {
+		while (1) {
 			m = keypad_clicked();
 			if (m == '*')
 				break;
@@ -135,7 +135,6 @@ void choose_meal() {
 			lcm_print(t);
 			seconds = 10 * (t[3] - '0') + (t[4] - '0');
 			minutes = 10 * (t[0] - '0') + (t[1] - '0');
-			j++;
 		}
 		lcm_firstline();
 		lcm_print("start?");
