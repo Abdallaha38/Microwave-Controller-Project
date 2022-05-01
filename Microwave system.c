@@ -26,7 +26,12 @@ void choose_meal() {
 
 	interrupt_rdy(0);
 	lcm_instruction(clear_display);
-	lcm_print("5od Samboosa");
+	lcm_print("Welcome");
+	delay_s(3);
+	lcm_movecursor(0, 0);
+	lcm_print("Choose a program");
+	lcm_movecursor(1, 0);
+	lcm_print("from (A-B-C-D)");
 	m = keypad_clicked();
 	lcm_instruction(clear_display);
 
@@ -128,27 +133,28 @@ void choose_meal() {
 }
 
 GPIOD_Handler() {
-	if (GPIO_PORTD_MIS_R == 0x80) {
-		lcm_movedisplay(20);
-		lcm_movecursor(0, 20);
-		lcm_print("CLOSE THE DOOR!!");
-		while (GPIO_PORTD_MIS_R == 0x80) {
-			lcm_instruction(display_off);
-			delay_ms(500);
-			lcm_instruction(display_on);
-			delay_ms(500);
-		}
-		lcm_instruction(return_home);
+	lcm_movedisplay(20);
+	lcm_movecursor(0, 20);
+	lcm_print("CLOSE THE DOOR!!");
+	while (GPIO_PORTD_MIS_R == 0x80) {
+		lcm_instruction(display_off);
+		GPIO_PORTF_DATA_R |= 0x0E;
+		delay_ms(500);
+		lcm_instruction(display_on);
+		GPIO_PORTF_DATA_R &= ~0x0E;
+		delay_ms(500);
 	}
-	else if (GPIO_PORTD_MIS_R == 0x40) {
-
-	}
+	lcm_instruction(return_home);
 }
 
 GPIOF_Handler() {
 	if (GPIO_PORTF_MIS_R == 0x10) {
 		delay_ms(500);
 		while (1) {
+			GPIO_PORTF_DATA_R &= ~0x0E;
+			delay_ms(500);
+			GPIO_PORTF_DATA_R |= 0x0E;
+			delay_ms(500);
 			if ((GPIO_PORTF_DATA_R & 0x01) == 0) {
 				GPIO_PORTF_ICR_R |= 0x10;
 				break;
@@ -163,6 +169,7 @@ GPIOF_Handler() {
 
 	else if (GPIO_PORTF_MIS_R == 0x01) {
 		lcm_instruction(clear_display);
+		GPIO_PORTF_DATA_R |= 0x0E;
 		print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
 		GPIO_PORTE_DIR_R |= 0x08;
 		GPIO_PORTE_DATA_R &= ~0x08;

@@ -328,8 +328,10 @@ void print_delay(int minutes, int seconds){
 	lcm_print("Finished !!");
 	for(k = 0; k < 3; k++){ 
 		delay_ms(500);
+		GPIO_PORTF_DATA_R &= ~0x0E;
 		lcm_instruction(display_off);
 		delay_ms(500);
+		GPIO_PORTF_DATA_R |= 0x0E;
 		lcm_instruction(display_on);
 	}
 }
