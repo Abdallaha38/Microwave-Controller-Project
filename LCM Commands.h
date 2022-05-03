@@ -51,28 +51,28 @@ void PORTE_Init(){
 	SYSCTL_RCGCGPIO_R |= 0x10;
 	while((SYSCTL_RCGCGPIO_R & 0x10) == 0);
 	GPIO_PORTE_LOCK_R = GPIO_LOCK_KEY;
-	GPIO_PORTE_CR_R = 0x0F;
+	GPIO_PORTE_CR_R = 0x1F;
 	GPIO_PORTE_AMSEL_R = 0x00;
 	GPIO_PORTE_AFSEL_R = 0x00;
-	GPIO_PORTE_DEN_R = 0x0F;
+	GPIO_PORTE_DEN_R = 0x1F;
 	GPIO_PORTE_PCTL_R = 0x00000000;
-	GPIO_PORTE_DIR_R = 0x07;
+	GPIO_PORTE_DIR_R = 0x17;
 }
 
-// a function to toggle enable pin high then low again
+// A funtion to toggle enable pin high then low again
 void enable_toggle(){
 	GPIO_PORTE_DATA_R &= ~0x01;
 	GPIO_PORTE_DATA_R |= 0x01;
 	GPIO_PORTE_DATA_R &= ~0x01;
 }
 
-// a function to set control signals
+// A funtion to set control signals
 void lcm_control(unsigned char control_signal){
 	GPIO_PORTE_DATA_R &= ~0x06;
 	GPIO_PORTE_DATA_R |= control_signal;
 }
 
-// a function that reads the address of the current cell
+// A funtion that reads the address of the current cell
 unsigned char lcm_read_address(){
 	char x;
 	GPIO_PORTB_DIR_R = 0x00;
@@ -83,7 +83,7 @@ unsigned char lcm_read_address(){
 	return (x & 0x7F);
 }
 
-// a function that returns busy flag; high = LCM is in operation please wait
+// A funtion that returns busy flag; high = LCM is in operation please wait
 unsigned char lcm_busy_flag(){
 	char x;
 	GPIO_PORTB_DIR_R = 0x00;
@@ -94,7 +94,7 @@ unsigned char lcm_busy_flag(){
 	return ((x & 0x10) >> 7);
 }
 
-// a function to pass instructions to LCM
+// A funtion to pass instructions to LCM
 void lcm_instruction(unsigned char instruction){
 	lcm_control(write_instruction);
 	GPIO_PORTB_DATA_R = instruction;
@@ -105,7 +105,7 @@ void lcm_instruction(unsigned char instruction){
 		delay_us(39);
 }
 
-// a function that controls LCM cursor and display shift
+// A funtion that controls LCM cursor and display shift
 void lcm_shift_control(unsigned char shift_type, int times){
 	int i;
 	lcm_control(write_instruction);
@@ -114,7 +114,7 @@ void lcm_shift_control(unsigned char shift_type, int times){
 	}
 }
 
-// a function that prints a single char to LCM
+// A funtion that prints a single char to LCM
 void lcm_print_char(char letter, int interval){
 	lcm_control(write_data);
 	GPIO_PORTB_DATA_R = letter;
@@ -125,7 +125,7 @@ void lcm_print_char(char letter, int interval){
 	 delay_ms(interval);
 }
 
-// a function to print a text of less than of equal 16 characters on LCM
+// A funtion to print a text of less than of equal 16 characters on LCM
 void lcm_print_string(char text[16]){
 	int i;
 	lcm_instruction(entry_mode_1);
@@ -134,14 +134,14 @@ void lcm_print_string(char text[16]){
 	}
 }
 
-// a function that directly prints an integer on LCM
+// A funtion that directly prints an integer on LCM
 void lcm_print_int(int x){
 	char temp[16];
 	sprintf(temp, "%d", x);
 	lcm_print_string(temp);
 }
 
-// a function to print a text of less that or equal 40 characters on LCM
+// A funtion to print a text of less that or equal 40 characters on LCM
 // in case of more than 16 characters the display shifts with text
 void lcm_print(char text[40]){
 	int i;
@@ -169,14 +169,14 @@ void lcm_print(char text[40]){
 		lcm_print_string("E: Text too long");
 }
 
-// a function that sets an address to DDRAM
+// A funtion that sets an address to DDRAM
 // DDRAM = Display Data RAM
 void lcm_ddram_address(unsigned char address){
 	unsigned char temp = 0x80 | address;
 	lcm_instruction(temp);
 }
 
-// a function that converts a location on LCM to its DDRAM address
+// A funtion that converts a location on LCM to its DDRAM address
 unsigned char lcm_LoctationToAddress(int row, int column){
 	unsigned char x;
 	if (row == 0)
@@ -187,7 +187,7 @@ unsigned char lcm_LoctationToAddress(int row, int column){
 	return x;	
 }
 
-// a function that moves cursor to a specific place in screen
+// A funtion that moves cursor to a specific place in screen
 void lcm_movecursor(int line, int place){
 	if (line == 0)
 		lcm_ddram_address(line0[place]);
@@ -195,7 +195,7 @@ void lcm_movecursor(int line, int place){
 		lcm_ddram_address(line1[place]);
 }
 
-// a function that returns what line the cursor is on
+// A funtion that returns what line the cursor is on
 int lcm_cursor_line(){
 	unsigned char x = lcm_read_address();
 	int line;
@@ -210,7 +210,7 @@ int lcm_cursor_line(){
 	return line;
 }
 
-// a function that returns what place the cursor is on
+// A funtion that returns what place the cursor is on
 int lcm_cursor_place(){
 	unsigned char x = lcm_read_address();
 	int i, place;
@@ -235,7 +235,7 @@ int lcm_cursor_place(){
 	return place;
 }
 
-// a function to moves display to specific column on LCM
+// A funtion to moves display to specific column on LCM
 // use lcm_movecursor to move the cursor as well
 void lcm_movedisplay(int place){
 	lcm_instruction(return_home);
@@ -245,7 +245,7 @@ void lcm_movedisplay(int place){
 		lcm_shift_control(display_shift_left, place);
 }
 
-// a function that reads a character from a location on display
+// A funtion that reads a character from a location on display
 char lcm_read(int row, int column){
 	char x;
 	lcm_movecursor(row, column);
@@ -258,7 +258,7 @@ char lcm_read(int row, int column){
 	return (x & 0x7F);
 }
 
-// a function that moves cursor to the beginning of the first line
+// A funtion that moves cursor to the beginning of the first line
 void lcm_firstline() {
 	int i = 0;
 	lcm_movecursor(0, 0);
@@ -269,7 +269,7 @@ void lcm_firstline() {
 	lcm_instruction(return_home);
 }
 
-// a function that moves cursor to the beginning of the second line
+// A funtion that moves cursor to the beginning of the second line
 void lcm_newline(){
 	int i = 0;
 	lcm_movecursor(1, 0);
@@ -281,14 +281,14 @@ void lcm_newline(){
 	lcm_movecursor(1, 0);
 }
 
-// a function that prints chars in time format
+// A funtion that prints chars in time format
 void print_time_char(char minutes[2], char seconds[2]){
 	lcm_print(minutes);
 	lcm_print(":");
 	lcm_print(seconds);
 }
 
-// a function that prints integers in time format
+// A funtion that prints integers in time format
 void print_time(int minute, int second){
 	char temp_s[2], temp_m[2];
 	
@@ -321,7 +321,7 @@ void print_time(int minute, int second){
 	lcm_print(temp_s);
 }
 
-// a function that prints a countdown to 0 from assigned time
+// A funtion that prints a countdown to 0 from assigned time
 void print_delay(int minutes, int seconds){
 	int i, j = seconds, k;
 	lcm_newline();
@@ -356,3 +356,4 @@ void lcm_Init(){
 	lcm_instruction(display_control_3);
 	lcm_instruction(entry_mode_1);
 }
+

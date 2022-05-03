@@ -31,11 +31,18 @@ void choose_meal() {
 	lcm_instruction(clear_display);
 	lcm_print("Welcome");
 	delay_s(3);
+Begin:
 	lcm_movecursor(0, 0);
 	lcm_print("Choose a program");
 	lcm_movecursor(1, 0);
 	lcm_print("from (A-B-C-D)");
 	m = keypad_clicked();
+	if(m != 'A' || m != 'B' || m != 'C' || m != 'D' ){
+		lcm_instruction(clear_display);
+		lcm_print("Err");
+		delay_s(1);
+		goto Begin;
+	}
 	lcm_instruction(clear_display);
 	pauseActive(1);
 
@@ -170,12 +177,11 @@ GPIOD_Handler() {
 GPIOF_Handler() {
 	delay_ms(500);
 	while (1) {
-		GPIO_PORTF_DATA_R &= ~0x0E;
-		delay_ms(500);
-		GPIO_PORTF_DATA_R |= 0x0E;
-		delay_ms(500);
+		GPIO_PORTF_DATA_R ^= 0x0E;
+		delay_ms(300);
 		if ((GPIO_PORTF_DATA_R & 0x01) == 0) {
 			GPIO_PORTF_ICR_R |= 0x10;
+			GPIO_PORTF_DATA_R |= 0x0E;
 			break;
 		}
 		else if ((GPIO_PORTF_DATA_R & 0x10) == 0) {

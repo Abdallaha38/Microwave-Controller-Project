@@ -11,16 +11,16 @@ void keypad_Init(void)
  GPIO_PORTC_AMSEL_R &= ~0xF0; //Disable analog functionality
  GPIO_PORTC_PCTL_R &= ~0xFFFF0000; //Enable digital functionality
  GPIO_PORTC_AFSEL_R &= ~0xF0; //Disable alternate function select
- GPIO_PORTC_DIR_R |= 0xF0 ; //PD0-PD3 rows and set as digital output pins
+ GPIO_PORTC_DIR_R |= 0xF0 ; //PC4-PC7 rows and set as digital output pins
  GPIO_PORTC_DEN_R |= 0xF0; //Set PORTC as digital pins
  GPIO_PORTC_DATA_R &= ~0xF0; //Clear data pins intially
 
  //PORTA digital input for columns
- GPIO_PORTA_CR_R |= 0xF0; //Allow settings for all pins of PORTC
+ GPIO_PORTA_CR_R |= 0xF0; //Allow settings for all pins of PORTA
  GPIO_PORTA_AMSEL_R &= ~0xF0; //Disable analog functionality
  GPIO_PORTA_PCTL_R &= ~0xFFFF0000; //Enable digital functionality
  GPIO_PORTA_AFSEL_R &= ~0xF0;
- GPIO_PORTA_DIR_R &= ~0xF0 ; //PC4-PC7 columns and set as digital output pins
+ GPIO_PORTA_DIR_R &= ~0xF0 ; //PA4-PA7 columns and set as digital output pins
  GPIO_PORTA_DEN_R |= 0xF0; //Set PORTA as digital pins
  GPIO_PORTA_PDR_R = 0xF0;
  GPIO_PORTA_DATA_R &= ~0xF0; //Clear data pins intially
