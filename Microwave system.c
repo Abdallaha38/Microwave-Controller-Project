@@ -6,25 +6,28 @@
 char t[5] = { '0', '0', ':', '0', '0' };
 int minutes, seconds, i;
 
-void interrupt_rdy(int x) {
-	if (!x) {
+void doorLockActive(int x) {
+	if (!x)
 		GPIO_PORTD_IM_R &= ~0x80;
-		//GPIO_PORTD_IM_R &= ~0x10;
-	}
-	else if (x) {
+	else if (x)
 		GPIO_PORTD_IM_R |= 0x80;
-		//GPIO_PORTD_IM_R |= 0x10;
-	}
+}
+
+void pauseActive(int x) {
+	if (!x)
+		GPIO_PORTF_IM_R &= ~0x10;
+	else if (x)
+		GPIO_PORTF_IM_R |= 0x10;
 }
 
 void choose_meal() {
 
 	char m;
 	int i, z;
-	char kilos[9] = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 	short count;
 
-	interrupt_rdy(0);
+	pauseActive(0);
+	doorLockActive(0);
 	lcm_instruction(clear_display);
 	lcm_print("Welcome");
 	delay_s(3);
@@ -34,12 +37,12 @@ void choose_meal() {
 	lcm_print("from (A-B-C-D)");
 	m = keypad_clicked();
 	lcm_instruction(clear_display);
+	pauseActive(1);
 
 	switch (m) {
 
 	case 'A':
 		lcm_print_string("Popcorn");
-		interrupt_rdy(1);
 		minutes = 1;
 		seconds = 0;
 		lcm_newline();
@@ -52,12 +55,12 @@ void choose_meal() {
 		delay_ms(100);
 		m = keypad_clicked();
 		//Checking for valid kilos entered (1-9)
-		for (count = 0; count < 9; count++)
+		for (count = 1; count < 10; count++)
 		{
 			lcm_instruction(clear_display);
-			if (m == kilos[count])
+			if ((m - '0') == count)
 				break;
-			else if (count == 8)
+			else if (count == 9)
 			{
 				lcm_print_string("Err");
 				delay_s(2);
@@ -69,7 +72,6 @@ void choose_meal() {
 		}
 		lcm_print_char(m, 0);
 		delay_s(2);
-		interrupt_rdy(1);
 		lcm_instruction(clear_display);
 		lcm_print("start?");
 		i = m - '0';
@@ -85,12 +87,12 @@ void choose_meal() {
 		delay_ms(100);
 		m = keypad_clicked();
 		//Checking for valid kilos entered (1-9)
-		for (count = 0; count < 9; count++)
+		for (count = 1; count < 10; count++)
 		{
 			lcm_instruction(clear_display);
-			if (m == kilos[count])
+			if ((m - '0') == count)
 				break;
-			else if (count == 8)
+			else if (count == 9)
 			{
 				lcm_print_string("Err");
 				delay_s(2);
@@ -102,7 +104,6 @@ void choose_meal() {
 		}
 		lcm_print_char(m, 0);
 		delay_s(2);
-		interrupt_rdy(1);
 		lcm_instruction(clear_display);
 		lcm_print("start?");
 		i = m - '0';
@@ -114,7 +115,6 @@ void choose_meal() {
 
 	case 'D':
 		lcm_print_string("Cooking Time?");
-		interrupt_rdy(1);
 		t[0] = '0';
 		t[1] = '0';
 		t[3] = '0';
@@ -144,6 +144,7 @@ void choose_meal() {
 }
 
 void start() {
+	doorLockActive(1);
 	lcm_instruction(clear_display);
 	GPIO_PORTF_DATA_R |= 0x0E;
 	print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
