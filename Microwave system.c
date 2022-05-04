@@ -133,6 +133,12 @@ Begin:
 			m = keypad_clicked();
 			if (m == '*')
 				break;
+			else if (m == 'A' || m == 'B' || m == 'C' || m == 'D' || m == '#') {
+				lcm_instruction(clear_display);
+				lcm_print("Err");
+				delay_s(1);
+				lcm_instruction(return_home);
+			}
 			else {
 				t[0] = t[1];
 				t[1] = t[3];
