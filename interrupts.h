@@ -1,15 +1,15 @@
 #include "tm4c123gh6pm.h"
 
-void interrupt_Init(){
+void interrupt_Init() {
 	NVIC_EN0_R |= 0x00000008;  // enable interrupts for port D
 	NVIC_PRI0_R |= 0x60000000;
-	
+
 	NVIC_EN0_R |= 0x40000000;  // enable interrupts for port F
 	NVIC_PRI7_R |= 0x00800000;
-	
+
 	SYSCTL_RCGCGPIO_R |= 0x28;
-	while((SYSCTL_RCGCGPIO_R & 0x28) == 0); // enable clock for port D, F
-	
+	while ((SYSCTL_RCGCGPIO_R & 0x28) == 0); // enable clock for port D, F
+
 	GPIO_PORTD_LOCK_R = GPIO_LOCK_KEY;
 	GPIO_PORTD_CR_R = 0x80;
 	GPIO_PORTD_AMSEL_R = 0x00;
@@ -17,10 +17,10 @@ void interrupt_Init(){
 	GPIO_PORTD_DEN_R = 0x80;
 	GPIO_PORTD_PCTL_R = 0x0FFFFFFF;
 	GPIO_PORTD_DIR_R = 0x00;
-	GPIO_PORTD_IM_R = 0x80;
+	GPIO_PORTD_IM_R = 0x00;
 	GPIO_PORTD_IS_R = 0x80;
 	GPIO_PORTD_IEV_R = 0x00;
-	
+
 	GPIO_PORTF_LOCK_R = GPIO_LOCK_KEY;
 	GPIO_PORTF_CR_R |= 0x1F;
 	GPIO_PORTF_AMSEL_R = 0x00;
@@ -30,7 +30,7 @@ void interrupt_Init(){
 	GPIO_PORTF_DIR_R &= ~0x11;
 	GPIO_PORTF_DIR_R |= 0x0E;
 	GPIO_PORTF_PUR_R = 0x11;
-	GPIO_PORTF_IM_R = 0x11;
+	GPIO_PORTF_IM_R = 0x00;
 	GPIO_PORTF_IS_R = 0x00;
 	GPIO_PORTF_IEV_R = 0x00;
 }

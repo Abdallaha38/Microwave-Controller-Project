@@ -30,14 +30,14 @@ void choose_meal() {
 	doorLockActive(0);
 	lcm_instruction(clear_display);
 	lcm_print("Welcome");
-	delay_s(3);
+	delay_s(2);
 Begin:
 	lcm_movecursor(0, 0);
 	lcm_print("Choose a program");
 	lcm_movecursor(1, 0);
 	lcm_print("from (A-B-C-D)");
 	m = keypad_clicked();
-	if(m != 'A' || m != 'B' || m != 'C' || m != 'D' ){
+	if (m != 'A' && m != 'B' && m != 'C' && m != 'D') {
 		lcm_instruction(clear_display);
 		lcm_print("Err");
 		delay_s(1);
@@ -70,7 +70,7 @@ Begin:
 			else if (count == 9)
 			{
 				lcm_print_string("Err");
-				delay_s(2);
+				delay_s(1);
 				lcm_instruction(clear_display);
 				lcm_print_string("Beef weight?");
 				m = keypad_clicked();
@@ -78,6 +78,7 @@ Begin:
 			}
 		}
 		lcm_print_char(m, 0);
+		lcm_print(" kg");
 		delay_s(2);
 		lcm_instruction(clear_display);
 		lcm_print("start?");
@@ -102,7 +103,7 @@ Begin:
 			else if (count == 9)
 			{
 				lcm_print_string("Err");
-				delay_s(2);
+				delay_s(1);
 				lcm_instruction(clear_display);
 				lcm_print_string("Chicken weight?");
 				m = keypad_clicked();
@@ -110,6 +111,7 @@ Begin:
 			}
 		}
 		lcm_print_char(m, 0);
+		lcm_print(" kg");
 		delay_s(2);
 		lcm_instruction(clear_display);
 		lcm_print("start?");
@@ -138,6 +140,8 @@ Begin:
 				t[4] = m;
 			}
 			delay_ms(250);
+			lcm_movecursor(0, 0);
+			lcm_print("'*' to confirm");
 			lcm_movecursor(1, 0);
 			lcm_print(t);
 			seconds = 10 * (t[3] - '0') + (t[4] - '0');
