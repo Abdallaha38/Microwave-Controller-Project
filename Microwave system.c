@@ -16,8 +16,10 @@ void doorLockActive(int x) {         //function to activiate door-lock interrupt
 void pauseActive(int x) {            //function to (pause door-lock activiation) i.e. interruption
 	if (!x)
 		GPIO_PORTF_IM_R &= ~0x10;
-	else if (x)
+	else if (x) {
+		GPIO_PORTF_ICR_R |= 0x10;
 		GPIO_PORTF_IM_R |= 0x10;
+	}
 }
 
 void choose_meal() {       //main function to choose a meal
