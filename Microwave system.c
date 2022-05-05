@@ -132,13 +132,13 @@ Begin:        //start the program
 		delay_ms(100);
 		while (1) { 
 			m = keypad_clicked();
-			if (m == '*')    //indicate to finish entering numbers
+			if (m == '*')    //indicate that user has finished entering time
 				break;
 			else if (m == 'A' || m == 'B' || m == 'C' || m == 'D' || m == '#') {   //if user by false entered letter.. go back to choose a meal
 				lcm_instruction(clear_display);
 				lcm_print("Err");
 				delay_s(1);
-				lcm_instruction(return_home);    //return for the main function to choose a meal
+				lcm_instruction(return_home);    //return to wait for user entering numbers
 			}
 			else {
 				t[0] = t[1];
@@ -161,7 +161,7 @@ Begin:        //start the program
 	}
 }
 
-void start() {    //intiate the microwave system before start cooking
+void start() {    //starting the microwave system(look door, show time remaining and turn buzzer with leds after finishing) 
 	doorLockActive(1);
 	lcm_instruction(clear_display);
 	GPIO_PORTF_DATA_R |= 0x0E;
