@@ -1,4 +1,4 @@
-Microwave Oven Controller Project
+Microwave Oven Controller Project Description
 
 Aim: This project simulates the embedded controller in a microwave oven.
 Requirements:
@@ -56,51 +56,3 @@ timed cooking or defrosting), the array of LEDs should flash 3 times (wait time 
 wait time off), and the buzzer should produce an audible tone/alarm during these 3
 second times periods.
 
-Number of Students
-The project team should be between 4-6 members.
-
-Project Delivery
-1. PDF document contains the state machine diagram you implemented to simulate
-Microwave controller and explains it.
-a. The pdf should contain the contribution of each team member
-b. The pdf should contain different snapshots covering different scenarios
-mentioned in “Procedure Detailes” section
-c. The pdf should contain the valid link of the recorded video for your
-project
-d. The pdf should contain the valid GitHub link of your project
-2. You should submit your code files compressed in .zip format.
-3. The video should show all the cases mentioned under “Procedure Details”
-section.
-4. A Demo will be held after the submission.
-
-Project Deadline
-1. The project will be submitted on 20th May.
-
-2. The Demo will be held after that between 21st
-
--24th May.
-
-Project Instructions
-1. Download the kit header file from the below link to include it to use its
-defined macros in your code.
-
-https://drive.google.com/file/d/1Gyt1VkYgfyEYHeF1VL6ivI9W2FQkB-
-GQ/view?usp=sharing
-
-2. Your implementation should be in embedded C.
-3. The demo video should be taken as one shot without cuts or edits.
-Evaluation
-1. 25% of the marks for individual contribution specially the GitHub repository
-contribution.
-2. 75% of the marks for the project team.
-Note: A team member without contribution on GitHub repo will get ZERO.
-
-
-Notes:
-1. You can make your GitHub repo private until submission and then adjust it to be
-public to be evaluated.
-2. The timer of Microwave controller should be implemented using Systick Timer.
-3. The maximum bonus marks of the project are 5 marks.
-4. You would gain bonus mark if you wrote your project in a good coding style.
-5. Bonus marks will be provided if extra or sophisticated functionalities have been
-added. E.g. implementing the LCD interfacing without using built-in LCD driver.
