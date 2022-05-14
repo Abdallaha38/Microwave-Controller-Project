@@ -327,7 +327,7 @@ void print_delay(int minutes, int seconds){
 	lcm_newline();
 	lcm_print("Time left: ");
 	for(i = minutes; i >= 0; i--){
-		for(j = j; j >= 0; j--){
+		for(; j >= 0; j--){
 			lcm_movecursor(1, 11);
 			print_time(i, j);
 			delay_s(1);
@@ -337,16 +337,18 @@ void print_delay(int minutes, int seconds){
 	
 	lcm_newline();
 	lcm_print("Finished !!");
-	for(k = 0; k < 3; k++){ 
-		delay_ms(500);
+	for(k = 0; k < 3; k++){
 		GPIO_PORTF_DATA_R &= ~0x0E;
 		GPIO_PORTE_DATA_R &= ~0x10;
 		lcm_instruction(display_off);
 		delay_ms(500);
 		GPIO_PORTF_DATA_R |= 0x0E;
 		GPIO_PORTE_DATA_R |= 0x10;
-		lcm_instruction(display_on);
+		lcm_instruction(display_on); 
+		delay_ms(500);
 	}
+	GPIO_PORTF_DATA_R &= ~0x0E;
+	GPIO_PORTE_DATA_R &= ~0x10;
 }
 
 // LCM initiation function
@@ -355,7 +357,7 @@ void lcm_Init(){
 	PORTE_Init();
 	lcm_instruction(clear_display);
 	lcm_instruction(function_set);
-	lcm_instruction(display_control_3);
+	lcm_instruction(display_control_1);
 	lcm_instruction(entry_mode_1);
 }
 

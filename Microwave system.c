@@ -152,7 +152,10 @@ Begin:        //start the program
 			lcm_movecursor(1, 0);
 			lcm_print(t);
 			seconds = 10 * (t[3] - '0') + (t[4] - '0');
-			minutes = 10 * (t[0] - '0') + (t[1] - '0');
+			z = ((10 * (t[0] - '0') + (t[1] - '0')) * 60) + seconds;
+			minutes = z / 60;
+			seconds = z % 60;
+			
 		}
 		lcm_firstline();
 		lcm_print("start?");
@@ -166,8 +169,6 @@ void start() {    //starting the microwave system(look door, show time remaining
 	lcm_instruction(clear_display);
 	GPIO_PORTF_DATA_R |= 0x0E;
 	print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
-	GPIO_PORTE_DIR_R |= 0x08;
-	GPIO_PORTE_DATA_R &= ~0x08;
 }
 
 GPIOD_Handler() {    //handle door interrupts
@@ -209,6 +210,9 @@ int main() {
 	lcm_Init();
 	keypad_Init();
 	interrupt_Init();
-	choose_meal();
-	start();
+	
+	while(1){
+		choose_meal();
+		start();
+	}
 }
