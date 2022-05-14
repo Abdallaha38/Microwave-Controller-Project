@@ -135,6 +135,7 @@ Begin:        //start the program
 			if (m == '*')    //indicate that user has finished entering time
 				break;
 			else if (m == 'A' || m == 'B' || m == 'C' || m == 'D' || m == '#') {   //if user by false entered letter.. go back to choose a meal
+				lcm_instruction(display_control_1);
 				lcm_instruction(clear_display);
 				lcm_print("Err");
 				delay_s(1);
@@ -146,17 +147,20 @@ Begin:        //start the program
 				t[3] = t[4];
 				t[4] = m;
 			}
+			lcm_instruction(display_control_3);
 			delay_ms(250);
 			lcm_movecursor(0, 0);
 			lcm_print("'*' to confirm");
 			lcm_movecursor(1, 0);
 			lcm_print(t);
+			lcm_movecursor(1, 4);
 			seconds = 10 * (t[3] - '0') + (t[4] - '0');
 			z = ((10 * (t[0] - '0') + (t[1] - '0')) * 60) + seconds;
 			minutes = z / 60;
 			seconds = z % 60;
 			
 		}
+		lcm_instruction(display_control_1);
 		lcm_firstline();
 		lcm_print("start?");
 		while (GPIO_PORTF_DATA_R & 0x01);    //SW-2 shouled be ON (PUSHED) to start the microwave

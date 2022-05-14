@@ -360,4 +360,3 @@ void lcm_Init(){
 	lcm_instruction(display_control_1);
 	lcm_instruction(entry_mode_1);
 }
-
