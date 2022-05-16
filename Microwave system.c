@@ -8,16 +8,16 @@ int minutes, seconds, i;
 
 void doorLockActive(int x) {         //function to activiate door-lock interrupt
 	if (!x)
-		GPIO_PORTD_IM_R &= ~0x80;
+		GPIO_PORTD_IM_R &= ~0x80;    //interrupt mask
 	else if (x)
 		GPIO_PORTD_IM_R |= 0x80;
 }
 
-void pauseActive(int x) {            //function to (pause door-lock activiation) i.e. interruption
+void pauseActive(int x) {            //function to activiate switch 1 interrupt to make timer hold its current value until re-start
 	if (!x)
 		GPIO_PORTF_IM_R &= ~0x10;
 	else if (x) {
-		GPIO_PORTF_ICR_R |= 0x10;
+		GPIO_PORTF_ICR_R |= 0x10;     //interrupt clear
 		GPIO_PORTF_IM_R |= 0x10;
 	}
 }
