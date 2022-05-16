@@ -17,7 +17,7 @@ void pauseActive(int x) {            //function to activiate switch 1 interrupt 
 	if (!x)
 		GPIO_PORTF_IM_R &= ~0x10;
 	else if (x) {
-		GPIO_PORTF_ICR_R |= 0x10;     //interrupt clear
+		GPIO_PORTF_ICR_R |= 0x10;     //interrupt clear to acknowlodge new interrupt
 		GPIO_PORTF_IM_R |= 0x10;
 	}
 }
