@@ -175,7 +175,7 @@ void start() {    //starting the microwave system(look door, show time remaining
 	print_delay(((minutes > 30) ? 30 : minutes), ((minutes >= 30) ? 0 : seconds));
 }
 
-GPIOD_Handler() {    //handle door interrupts
+GPIOD_Handler() {    //door-open interrupt
 	lcm_movedisplay(20);
 	lcm_movecursor(0, 20);
 	lcm_print("CLOSE THE DOOR!!");
@@ -190,7 +190,7 @@ GPIOD_Handler() {    //handle door interrupts
 	lcm_instruction(return_home);
 }
 
-GPIOF_Handler() {     //handle leds interrupts
+GPIOF_Handler() {     //pause, start, and reset interrupts
 	delay_ms(500);
 	while (1) {
 		GPIO_PORTF_DATA_R ^= 0x0E;
