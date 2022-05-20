@@ -91,7 +91,7 @@ unsigned char lcm_busy_flag() {
 	enable_toggle();
 	x = GPIO_PORTB_DATA_R;
 	GPIO_PORTB_DIR_R = 0xFF;
-	return ((x & 0x10) >> 7);
+	return ((x & 0x80) >> 7);
 }
 
 // A funtion to pass instructions to LCM
