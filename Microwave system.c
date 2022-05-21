@@ -147,13 +147,13 @@ Begin:        //start the program
 				t[3] = t[4];
 				t[4] = m;
 			}
-			lcm_instruction(display_control_3);
 			delay_ms(250);
 			lcm_movecursor(0, 0);
 			lcm_print("'*' to confirm");
 			lcm_movecursor(1, 0);
 			lcm_print(t);
 			lcm_movecursor(1, 4);
+			lcm_instruction(display_control_3);
 			seconds = 10 * (t[3] - '0') + (t[4] - '0');
 			z = ((10 * (t[0] - '0') + (t[1] - '0')) * 60) + seconds;
 			minutes = z / 60;
