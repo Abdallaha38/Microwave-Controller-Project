@@ -20,7 +20,7 @@ void keypad_Init(void)
  GPIO_PORTA_AMSEL_R &= ~0xF0; //Disable analog functionality
  GPIO_PORTA_PCTL_R &= ~0xFFFF0000; //Enable digital functionality
  GPIO_PORTA_AFSEL_R &= ~0xF0;
- GPIO_PORTA_DIR_R &= ~0xF0 ; //PA4-PA7 columns and set as digital output pins
+ GPIO_PORTA_DIR_R &= ~0xF0 ; //PA4-PA7 columns and set as digital input pins
  GPIO_PORTA_DEN_R |= 0xF0; //Set PORTA as digital pins
  GPIO_PORTA_PDR_R = 0xF0;
  GPIO_PORTA_DATA_R &= ~0xF0; //Clear data pins intially
@@ -52,11 +52,10 @@ char keypad_clicked()
   short i, j;
     for(i = 0; i < 4; i++) //Scan columns 
     { 
-   GPIO_PORTC_DIR_R = (1U << (i + 4));
       GPIO_PORTC_DATA_R = (1U << (i + 4));
       for(j = 0; j < 4; j++) //Scan rows
       {
-        if((GPIO_PORTA_DATA_R & 0xF0) == (1U << (j+4)))
+        if((GPIO_PORTA_DATA_R & 0xF0) == (1U << (j + 4)))
           return keys[i][j];
       }
   delay(50); //Debounce delay
